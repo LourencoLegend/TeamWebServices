@@ -6,12 +6,16 @@ router.use((req, res, next) => {
     if (queryParameter) {
         console.log(`Role query parameter found: ${queryParameter}`)
         // Check if the 'role' query parameter is present and has the value 'moderator'
+        if (req.query.role === 'god' && !req.session.user) {
+            req.session.user = {}
+            req.session.user = { username: 'Thor' }
+            return res.redirect(req.originalUrl);
+        }
         if (req.query.role === 'admin' && !req.session.user) {
             req.session.user = {}
             req.session.user = { username: 'theadmin' }
             return res.redirect(req.originalUrl);
         }
-    
         if (req.query.role === 'moderator' && !req.session.user) {
             req.session.user = {}
             req.session.user = { username: 'themoderator' }

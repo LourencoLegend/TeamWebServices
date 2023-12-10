@@ -1,44 +1,46 @@
 const mongodb = require('../data/database');
-
+ 
 const isAuthenticated = (req, res, next) => {
   if (req.session.user === undefined) {
     const message = "You do not have access. You need to login";
-
+ 
     // Check if the request is for an API endpoint
     if (req.originalUrl.startsWith('/api')) {
       return res.status(401).json({ message });
     } else {
-      // If it's not an API request, render a view or redirect
-      res.render("index", { message, req }); // Pass the req object for dynamic login logout link
-      // Or redirect to a login page
-      // res.redirect('/login');
+      const data = {
+        message: message,
+        req: req ,
+      };
+      res.render('frontend/index', data);
     }
   } else {
     next();
   }
 };
-
+ 
 const isGod = async (req, res, next) => {
   if (req.session.user === undefined) {
     const message = "You do not have access. You need to login";
-
+ 
     // Check if the request is for an API endpoint
     if (req.originalUrl.startsWith('/api')) {
       return res.status(401).json({ message });
     } else {
-      // If it's not an API request, render a view or redirect
-      res.render("index", { message, req }); // Pass the req object for dynamic login logout link
-      // Or redirect to a login page
-      // res.redirect('/login');
+      const data = {
+        message: message,
+        req: req ,
+      };
+      res.render('frontend/index', data);
     }
   } else {
     const user = req.session.user.username;
-    
+   
     try {
       const rolesCollection = mongodb.getDatabase().db('project1').collection('roles');
       // console.log(rolesCollection)
       const userRole = await rolesCollection.findOne({ login: user });
-
+ 
       if (userRole && userRole.role === 'god') {
         req.isGod = true;
         req.isAdmin = true;
@@ -54,15 +56,20 @@ const isGod = async (req, res, next) => {
     }
   }
 };
-
+ 
 const isAdmin = async (req, res, next) => {
   if (req.session.user === undefined) {
     const message = "You do not have access. You need to login";
-
+ 
     // Check if the request is for an API endpoint
     if (req.originalUrl.startsWith('/api')) {
       return res.status(401).json({ message });
     } else {
+      const data = {
+        message: message,
+        req: req ,
+      };
+      res.render('frontend/index', data);
       // If it's not an API request, render a view or redirect
       res.render("index", { message, req }); // Pass the req object for dynamic login logout link
       // Or redirect to a login page
@@ -70,12 +77,12 @@ const isAdmin = async (req, res, next) => {
     }
   } else {
     const user = req.session.user.username;
-    
+   
     try {
       const rolesCollection = mongodb.getDatabase().db('project1').collection('roles');
       // console.log(rolesCollection)
       const userRole = await rolesCollection.findOne({ login: user });
-
+ 
       if (userRole && userRole.role === 'god') {
         req.isGod = true;
         req.isAdmin = true;
@@ -97,27 +104,28 @@ const isAdmin = async (req, res, next) => {
     }
   }
 };
-
+ 
 const isModerator = async (req, res, next) => {
   if (req.session.user === undefined) {
     const message = "You do not have access. You need to login";
-
+ 
     // Check if the request is for an API endpoint
     if (req.originalUrl.startsWith('/api')) {
       return res.status(401).json({ message });
     } else {
-      // If it's not an API request, render a view or redirect
-      res.render("index", { message, req }); // Pass the req object for dynamic login logout link
-      // Or redirect to a login page
-      // res.redirect('/login');
+      const data = {
+        message: message,
+        req: req ,
+      };
+      res.render('frontend/index', data);
     }
   } else {
     const user = req.session.user.username;
-
+ 
     try {
       const rolesCollection = mongodb.getDatabase().db().collection('roles');
       const userRole = await rolesCollection.findOne({ login: user });
-
+ 
       if (userRole && userRole.role === 'god') {
         req.isGod = true;
         req.isAdmin = true;
@@ -130,12 +138,12 @@ const isModerator = async (req, res, next) => {
         req.isAdmin = true;
         console.log('You have moderator privileges.');
         next();
-      } 
+      }
       else if (userRole && userRole.role === 'moderator') {
         req.isModerator = true;
         console.log('You have moderator privileges.');
         next();
-      } 
+      }
       else {
         res.status(403).json({ message: 'You do not have moderator privileges.' });
       }
@@ -145,11 +153,12 @@ const isModerator = async (req, res, next) => {
     }
   }
 };
-
-
+ 
+ 
 module.exports = {
   isAuthenticated,
   isGod,
   isAdmin,
   isModerator
 };
+ 
